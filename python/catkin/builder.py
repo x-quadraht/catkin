@@ -191,11 +191,14 @@ def run_command(cmd, cwd, quiet=False, colorize=False, add_env=None):
         while True:
             line = proc.stdout.readline()
             try:
-                # in case the input is already unicode
                 line = line.encode('utf8')
             except (AttributeError, UnicodeDecodeError):
                 pass
-            line = line.decode('utf8', 'replace')
+            try:
+                line = line.decode('utf8', 'replace')
+                line = line.encode('utf8')
+            except UnicodeEncodeError:
+                pass
             if proc.returncode is not None or not line:
                 break
             try:
